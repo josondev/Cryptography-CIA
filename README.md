@@ -1,27 +1,32 @@
-# Affine Cipher
+# XOR Affine Cipher
 
-The Affine Cipher is a type of monoalphabetic substitution cipher. Unlike a simple shift cipher, it uses a mathematical function to map each letter to its new position by multiplying and adding to the letter's numerical value. 
+The XOR Affine Cipher is an advanced substitution cipher that combines modular arithmetic with bitwise logical operations. It maps characters using an expanded 32-character dictionary (A-Z and 1-6) to ensure the mathematical transformations stay perfectly within bounds.
 
 ## Algorithm Steps
 
-It uses two secret keys, **a** and **b**. Key **a** must be "coprime" with 26 (meaning they share no common mathematical factors other than 1; valid keys include 1, 3, 5, 7, 9, 11, 15, 17, 19, 21, 23, and 25).
+This cipher utilizes two keys: **a** (which must be coprime with the dictionary size, 32) and **b**.
 
 ### Encryption
-1. Convert each letter of the plaintext into a number from 0 to 25 (A=0, B=1... Z=25).
-2. Apply the encryption formula: E(x) = (ax + b) mod 26.
-3. Convert the resulting number back into a letter.
-4. Leave non-letter characters unchanged.
+1. Read the input message character by character and convert it to uppercase.
+2. If the character exists in the dictionary, retrieve its numerical index (let's call it `x`).
+3. Multiply `x` by key **a**, and apply the modulo 32 operator to keep the value within the dictionary limits.
+4. Apply the bitwise XOR operator (`^`) between that result and key **b**.
+5. Retrieve the new ciphertext character corresponding to the final index.
+6. Retain all unsupported characters unchanged.
 
 ### Decryption
-1. Find the modular multiplicative inverse of key **a** (often denoted as a⁻¹).
-2. Convert each encrypted letter into a number from 0 to 25.
-3. Apply the decryption formula: D(x) = a⁻¹(x - b) mod 26.
-4. Convert the resulting number back into a letter.
-5. Leave non-letter characters unchanged.
+1. Calculate the modular multiplicative inverse of key **a** (let's call it `a_inv`) over modulo 32.
+2. Read the ciphertext message character by character.
+3. Retrieve the numerical index of the dictionary character (let's call it `y`).
+4. Apply the bitwise XOR operator (`^`) between `y` and key **b**.
+5. Multiply the result by `a_inv` and apply the modulo 32 operator.
+6. Retrieve the original plaintext character corresponding to the final index.
+7. Retain all unsupported characters unchanged.
 
-## Code Explanation
-The Python implementation translates the mathematical formulas directly into code to encrypt and decrypt the text:
+## Hash Function Used
 
-* **Key Validation (`math.gcd(a, 26) != 1`):** The code first checks the Greatest Common Divisor of key **a** and 26. If it is not exactly 1, the script raises an error because the math will break, causing multiple letters to encrypt to the same character.
-* **The Encryption Loop `(a * x + b) % 26`:** We scale the letters to a 0-25 range (represented by `x`). We multiply by key **a**, add key **b**, and use `% 26` to safely wrap the result around the 26-letter alphabet. 
-* **The Decryption Loop `pow(a, -1, 26)`:** This built-in Python math function calculates the modular multiplicative inverse of key **a**. We then apply it to the reversed formula `(a_inv * (y - b)) % 26` to walk the math backward and reveal the original letter.
+In this cipher, the **bitwise XOR operator (`^`)** acts as the secondary hashing mechanism, integrated directly into the Affine equation to replace traditional mathematical addition. 
+
+By using XOR to hash the intermediate values, the cipher alters the data at the binary level. During encryption, the algorithm first maps the character using modular multiplication, and then hashes that intermediate result by XORing it against key **b** to produce the final ciphertext index. 
+
+During decryption, because the XOR operation is its own mathematical inverse, the algorithm simply applies the exact same XOR transformation against key **b** first to un-hash the binary bits. This safely restores the intermediate value, allowing the modular arithmetic to correctly reverse the rest of the cipher.
