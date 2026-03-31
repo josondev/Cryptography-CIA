@@ -1,6 +1,6 @@
-# XOR Affine Cipher
+# Affine Cipher
 
-The XOR Affine Cipher is an advanced substitution cipher that combines modular arithmetic with bitwise logical operations. It maps characters using an expanded 32-character dictionary (A-Z and 1-6) to ensure the mathematical transformations stay perfectly within bounds.
+The Affine Cipher is an advanced substitution cipher that combines modular arithmetic with bitwise logical operations. It maps characters using an expanded 32-character dictionary (A-Z and 1-6) to ensure the mathematical transformations stay perfectly within bounds.
 
 ## Algorithm Steps
 
